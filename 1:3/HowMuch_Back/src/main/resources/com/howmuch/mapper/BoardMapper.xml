@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.howmuch.mapper.BoardMapper">
+	<select id="getData" resultType="com.howmuch.domain.BoardVO">
+		select * from hm_board
+	</select>
+	
+	<select id="getList" resultType="com.howmuch.domain.BoardVO">
+		select * from hm_board
+	</select>
+	
+	<update id="updateData">
+		update hm_board set title=#{title}, content=#{content}, image=#{image}, tag=#{tag} where bno=#{bno}
+	</update>
+	
+	<insert id="register">
+		insert into hm_board(title, content, image, tag, suggestion, writer) values(#{title}, #{content}, #{image}, #{tag}, #{suggestion}, #{writer})
+	</insert>
+	
+	<delete id="delete">
+		delete from hm_board where bno = #{bno}
+	</delete>
+	
+	<select id="selectSearchList" parameterType="com.howmuch.domain.BoardVO" resultType="com.howmuch.domain.BoardVO">
+		select * from hm_board
+		<choose>
+			<when test="type != null and type.equals('title')">
+				and title like concat('%', #{keyword}, '%')
+			</when>
+			<when test="type != null and type.equals('writer')">
+				and writer like concat('%', #{keyword}, '%')
+			</when>
+			<when test="type != null and type.equals('tag')">
+				and tag like concat('%', #{keyword}, '%')
+			</when>
+		</choose>
+	</select>
+	
+	<update id="view">
+		update hm_board set rcount = rcount + 1 where bno = #{bno}
+	</update>
+</mapper>

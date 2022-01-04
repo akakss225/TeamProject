@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.howmuch.mapper.MemberMapper">
+	<insert id="signUp1">
+		insert into hm_member(email, nick, pw) values(#{email}, #{nick}, #{pw})
+	</insert>
+	
+	<insert id="signUp2">
+		insert into hm_member_auth(email) values(#{email})
+	</insert>
+	
+	<resultMap type="com.howmuch.domain.MemberVO" id="memberMap">
+		<!-- MemberVO와 대응되는 구간. -->
+		<id property="email" column="email" />
+		<result property="mno" column="mno" />
+		<result property="email" column="email" />
+		<result property="nick" column="nick" />
+		<result property="pw" column="pw" />
+		<result property="point" column="point" />
+		<!-- MemberVO의 authList와 대응됨. column 속성은 아래 resultMap의 id와 대응됨. -->
+		<collection property="authList" resultMap="authMap" />
+	</resultMap>
+	
+	<resultMap type="com.howmuch.domain.AuthVO" id="authMap">
+		<result property="email" column="email" />
+		<result property="authority" column="authority" />
+	</resultMap>
+	
+	<select id="read" resultMap="memberMap">
+		select
+		mem.mno, mem.email, nick, pw, point, authority from
+		hm_member mem left outer join hm_member_auth auth on mem.email = auth.email
+		where mem.email = #{email}
+	</select>
+	<select id="getRankByPosting" resultType="com.howmuch.domain.RankVO">
+		select mem.nick as nick, board.blike + board.suggestion as score, count(board.mno) as posting
+		from
+		hm_member mem left join hm_board board on mem.mno = board.mno
+		group by mem.nick, score
+		order by score desc
+		limit 10
+	</select>
+	<select id="getRankByTier" resultType="com.howmuch.domain.Rank2VO">
+		select nick, point from hm_member order by point desc limit 10
+	</select>
+	
+	<select id="findEmail" resultType="com.howmuch.domain.MemberVO">
+		select nick from hm_member where email=#{email}
+	</select>
+	
+	<select id="findNick" resultType="com.howmuch.domain.MemberVO">
+		select email from hm_member where nick=#{nick}
+	</select>
+	 
+</mapper>

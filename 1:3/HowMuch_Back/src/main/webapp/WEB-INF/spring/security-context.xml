@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 기존의 테이블에 권한을 주는 컬럼이 있을 때, bcryptPasswordEncoder사용 -->
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	<bean id="customUserDetailsService" class="com.howmuch.security.CustomUserDetailsService"></bean>
+	
+	<bean id="customLoginSuccess" class="com.howmuch.security.LoginSuccessHandler"></bean>
+	
+	<bean id="tokenRepository" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" p:cookieHttpOnly="false"/>
+	
+	<security:http auto-config="true" use-expressions="true">
+		<security:csrf disabled="true" />
+		<security:form-login login-page="http://localhost:3000/login" authentication-success-handler-ref="customLoginSuccess"  />
+		<security:logout invalidate-session="true" delete-cookies="remember-me,JSESSION_ID" />
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800" />
+		<security:csrf token-repository-ref="tokenRepository"/>
+	</security:http>
+	
+	
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+			<security:password-encoder ref="bcryptPasswordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+	
+
+</beans>

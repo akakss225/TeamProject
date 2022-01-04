@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.howmuch.mapper.ReplyMapper">
+	<select id="getData" resultType="com.howmuch.domain.ReplyVO">
+      select * from hm_reply
+   </select>
+	<insert id="insert">
+		insert into hm_reply(mno, bno, replyer, rcontent) 
+		values (#{mno}, #{bno}, #{replyer}, #{rcontent})
+	
+	</insert>
+	<select id="getList" resultType="com.howmuch.domain.ReplyVO">
+      select * from hm_reply
+   </select>
+   
+	<update id="update">
+		update hm_reply set replyer=#{replyer}, rcontent=#{rcontent}, rupdate=sysdate()
+		where rno=#{rno}
+	</update>
+		
+	<delete id="delete">
+		delete from hm_reply where rno = #{rno}
+	</delete>
+</mapper>

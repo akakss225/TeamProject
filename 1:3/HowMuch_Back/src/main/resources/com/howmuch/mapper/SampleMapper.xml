@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.howmuch.mapper.SampleMapper">
+	<select id="getData" resultType="com.howmuch.domain.SampleVO">
+		select * from sample
+	</select>
+	
+	<select id="getList" resultType="com.howmuch.domain.SampleVO">
+		select * from sample
+	</select>
+	
+	<update id="updateData">
+		update sample set name=#{name}, age=#{age} where id=#{id}
+	</update>
+	
+	<insert id="register">
+		insert into sample(name, age) values(#{name}, #{age})
+	</insert>
+	
+	<delete id="delete">
+		delete from sample where id = #{id}
+	</delete>
+</mapper>
