@@ -8,7 +8,7 @@ import { MdDeleteForever } from "react-icons/md";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { RiVipCrownFill } from "react-icons/ri";
-import "../css/DetailBoard.css";
+import { Button, Modal } from "react-bootstrap";
 
 const ReplyPagination = (props) => {
   const checkLogin = async () => {
@@ -99,20 +99,19 @@ const ReplyPagination = (props) => {
   ];
 
   const findTier = (userTier) => {
-    console.log(userTier);
-
     let findItem = tierObject.find((item) => {
       return item.tier === userTier;
     });
-
-    console.log(findItem);
-    console.log(findItem.color);
-
     return findItem.color;
   };
 
   // findTier(tierSelect(포인트 데이터))
   // tier reader end
+
+  const [loginLikeShow, setloginLikeShow] = useState(false);
+
+  const handleLoginLikeClose = () => setloginLikeShow(false);
+  const handleLoginLikeShow = () => setloginLikeShow(true);
 
   // pagination data
   const items = replyState;
@@ -197,30 +196,25 @@ const ReplyPagination = (props) => {
                           )}
                     </span>
                     <AiFillLike
+                      color="#EA5455"
                       onClick={async (e) => {
-                        let like = document.getElementById("like");
-                        let dislike = document.getElementById("dislike");
-                        console.log(like);
+                        if (!userInfo) {
+                          handleLoginLikeShow();
+                          return;
+                        }
+
                         await axios({
                           url: "/Rlike",
                           method: "get",
                           params: {
                             mno: userInfo.mno,
-                            bno: item.bno,
                             rno: item.rno,
                           },
-                        }).then((res) => {
-                          readReplyList();
+                        }).then(async (res) => {
+                          await readReplyList();
                         });
-
-                        if (like.getAttribute("class") === "") {
-                          dislike.setAttribute("class", "");
-                          like.setAttribute("class", "active");
-                        } else if (like.getAttribute("class") === "active") {
-                          like.setAttribute("class", "");
-                        }
                       }}
-                      style={{ color: "#EA5455", cursor: "pointer" }}
+                      style={{ cursor: "pointer" }}
                     />
                     <span
                       style={{
@@ -228,33 +222,28 @@ const ReplyPagination = (props) => {
                         paddingRight: "10px",
                       }}
                     >
-                      {item == null ? null : item.rlike}
+                      {item == null ? null : item.relike}
                     </span>
                     <AiFillDislike
+                      color="#F07B3F"
                       onClick={async (e) => {
-                        let like = document.getElementById("like");
-                        let dislike = document.getElementById("dislike");
-                        console.log(dislike);
+                        if (!userInfo) {
+                          handleLoginLikeShow();
+                          return;
+                        }
+
                         await axios({
                           url: "/Rdislike",
                           method: "get",
                           params: {
-                            mno: userInfo.mno,
-                            bno: item.bno,
                             rno: item.rno,
+                            mno: userInfo.mno,
                           },
-                        }).then((res) => {
-                          readReplyList();
+                        }).then(async (res) => {
+                          await readReplyList();
                         });
-
-                        if (dislike.getAttribute("class") === "") {
-                          like.setAttribute("class", "");
-                          dislike.setAttribute("class", "active");
-                        } else if (dislike.getAttribute("class") === "active") {
-                          dislike.setAttribute("class", "");
-                        }
                       }}
-                      style={{ color: "#F07B3F", cursor: "pointer" }}
+                      style={{ cursor: "pointer" }}
                     />
                     <span
                       style={{
@@ -262,7 +251,7 @@ const ReplyPagination = (props) => {
                         paddingRight: "10px",
                       }}
                     >
-                      {item == null ? null : item.rdislike}
+                      {item == null ? null : item.redislike}
                     </span>
                     {!checkUser ? null : (
                       <span
@@ -374,6 +363,36 @@ const ReplyPagination = (props) => {
   return (
     <div>
       <PaginatedItems itemsPerPage={6} />
+      {/* likelogin modal start */}
+      <Modal
+        show={loginLikeShow}
+        onHide={handleLoginLikeShow}
+        style={{ fontFamily: "'Do Hyeon', sans-serif" }}
+      >
+        <Modal.Header>
+          <Modal.Title>⚠️ 로그인이 필요한 서비스입니다! ⚠️</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          좋아요 및 싫어요를 하시려면 로그인이 필요합니다.
+          <br />
+          로그인을 하시거나 회원이 아니시라면 회원가입 후 이용 부탁드립니다.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleLoginLikeClose}>
+            취소
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleLoginLikeClose();
+              navigate("/login");
+            }}
+          >
+            로그인하러 가기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* likelogin modal end */}
     </div>
   );
 };

@@ -119,8 +119,10 @@ const Account = () => {
       .then((result) => {
         // console.log(result.data.nick);
         if (result.data.nick) {
+          resetShow();
           SetidSame("yes");
         } else {
+          resetShow();
           SetidSame("no");
         }
       })
@@ -230,6 +232,12 @@ const Account = () => {
               />
               <Button
                 onClick={() => {
+                  if (!idInput.value) {
+                    resetShow();
+                    SetidCheck(true);
+                    return;
+                  }
+                  resetShow();
                   idSameCheck(idInput.value);
                 }}
                 style={{ margin: "20px 10px" }}
@@ -326,6 +334,12 @@ const Account = () => {
               />
               <Button
                 onClick={() => {
+                  if (!nickInput.value) {
+                    resetShow();
+                    SetnickCheck(true);
+                    return;
+                  }
+                  resetShow();
                   nickSameCheck(nickInput.value);
                 }}
                 style={{ margin: "20px 10px" }}

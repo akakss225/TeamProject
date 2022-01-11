@@ -238,15 +238,6 @@ const LoginPage = () => {
                   회원가입
                 </Button>
                 <Button
-                  style={{
-                    backgroundColor: "#2d4059",
-                    border: "none",
-                    fontSize: "24px",
-                  }}
-                >
-                  계정찾기
-                </Button>
-                <Button
                   onClick={() => {
                     navigate("/");
                   }}

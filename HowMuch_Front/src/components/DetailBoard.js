@@ -14,7 +14,6 @@ import BoardListPagination from "./BoardListPagination";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { RiVipCrownFill } from "react-icons/ri";
-import "../css/DetailBoard.css";
 
 const DetailBoard = (props) => {
   let navigate = useNavigate();
@@ -112,6 +111,58 @@ const DetailBoard = (props) => {
     });
   };
 
+  const read = async () => {
+    await axios({
+      url: "/read",
+      method: "get",
+      params: {
+        bno: bno,
+      },
+    }).then((res) => {
+      console.log(res.data);
+
+      SetoneBoard(res.data);
+    });
+  };
+
+  let [oneBoard, SetoneBoard] = useState("");
+
+  // like, dislike color start
+  let [likecolor, Setlikecolor] = useState("");
+
+  let [dislikecolor, Setdislikecolor] = useState("");
+
+  // like, dislike color end
+
+  const readedBoard = async () => {
+    await axios({
+      url: "/readed",
+      method: "get",
+      params: {
+        bno: bno,
+      },
+    }).then(async (res) => {
+      console.log("좋아요 표시기");
+      console.log(res.data);
+
+      if (res.data.checklike === 1) {
+        console.log("추천 이력 있음");
+        Setlikecolor("#EA5455");
+      } else if (res.data.checklike === 0) {
+        console.log("추천 이력 없음");
+        Setlikecolor("");
+      }
+
+      if (res.data.checkdislike === 1) {
+        console.log("비추천 이력 없음");
+        Setdislikecolor("#F07B3F");
+      } else if (res.data.checkdislike === 0) {
+        console.log("비추천 이력 없음");
+        Setdislikecolor("");
+      }
+    });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     resetBoolean();
@@ -120,7 +171,9 @@ const DetailBoard = (props) => {
     readReplyList();
     readValueList();
     readCalculateValue();
+    read();
     upreadCount();
+    readedBoard();
   }, []);
 
   let { bno } = useParams();
@@ -176,15 +229,9 @@ const DetailBoard = (props) => {
   ];
 
   const findTier = (userTier) => {
-    console.log(userTier);
-
     let findItem = tierObject.find((item) => {
       return item.tier === userTier;
     });
-
-    console.log(findItem);
-    console.log(findItem.color);
-
     return findItem.color;
   };
 
@@ -205,6 +252,11 @@ const DetailBoard = (props) => {
 
   const handleLoginClose = () => setloginShow(false);
   const handleLoginShow = () => setloginShow(true);
+
+  const [loginLikeShow, setloginLikeShow] = useState(false);
+
+  const handleLoginLikeClose = () => setloginLikeShow(false);
+  const handleLoginLikeShow = () => setloginLikeShow(true);
 
   const [warn, Setwarn] = useState(false);
   const [warnDuplication, SetwarnDuplication] = useState(false);
@@ -300,8 +352,8 @@ const DetailBoard = (props) => {
               글목록
             </Button>
             {valueState === "" ? null : valueState.length > 0 ? null : !(
-                userInfo && item
-              ) ? null : !(userInfo.nick === item.writer) ? null : (
+                userInfo && !oneBoard === ""
+              ) ? null : !(userInfo.nick === oneBoard.writer) ? null : (
               <Button
                 style={{
                   marginBottom: "10px",
@@ -309,15 +361,15 @@ const DetailBoard = (props) => {
                   borderStyle: "none",
                 }}
                 onClick={() => {
-                  navigate("/modify/" + item.bno);
-                  console.log(item);
+                  navigate("/modify/" + oneBoard.bno);
+                  console.log(oneBoard);
                 }}
               >
                 글수정
               </Button>
             )}
-            {!(userInfo && item) ? null : !(
-                userInfo.nick === item.writer
+            {!(userInfo && !oneBoard === "") ? null : !(
+                userInfo.nick === oneBoard.writer
               ) ? null : (
               <Button
                 onClick={async () => {
@@ -325,8 +377,8 @@ const DetailBoard = (props) => {
                     url: "/delete",
                     method: "delete",
                     params: {
-                      bno: item.bno,
-                      writer: item.writer,
+                      bno: oneBoard.bno,
+                      writer: oneBoard.writer,
                     },
                   })
                     .then((res) => {
@@ -351,9 +403,9 @@ const DetailBoard = (props) => {
                 글삭제
               </Button>
             )}
-            {item == null ? null : item.end === 1 ? null : !(
-                userInfo && item
-              ) ? null : !(userInfo.nick === item.writer) ? null : (
+            {oneBoard === "" ? null : oneBoard.end === 1 ? null : !(
+                userInfo && oneBoard
+              ) ? null : !(userInfo.nick === oneBoard.writer) ? null : (
               <Button
                 style={{
                   marginBottom: "10px",
@@ -365,7 +417,7 @@ const DetailBoard = (props) => {
                     url: "/setPoint",
                     method: "get",
                     params: {
-                      bno: item.bno,
+                      bno: oneBoard.bno,
                       mno: userInfo.mno,
                     },
                   }).then((res) => {
@@ -375,7 +427,7 @@ const DetailBoard = (props) => {
                     SetcalculateValue(res.data);
                   });
 
-                  navigate("/detail/" + item.bno);
+                  navigate("/detail/" + oneBoard.bno);
                 }}
               >
                 평가종료
@@ -390,14 +442,14 @@ const DetailBoard = (props) => {
         style={{ marginTop: "50px" }}
       >
         <Card style={{ width: "800px", color: "white", padding: "10px" }}>
-          {item === null ? null : item.imageList === null ? (
+          {oneBoard === "" ? null : oneBoard.imageList === null ? (
             <Card.Img
               variant="top"
               src={noImage}
               style={{ border: "2px solid #2D4059" }}
             />
           ) : (
-            item.imageList.map((item, index) => {
+            oneBoard.imageList.map((item, index) => {
               return (
                 <Card.Img
                   variant="top"
@@ -423,7 +475,7 @@ const DetailBoard = (props) => {
                   whiteSpace: "nowrap",
                 }}
               >
-                {item == null ? null : item.title}
+                {oneBoard === "" ? null : oneBoard.title}
               </Card.Title>
             </div>
             <div style={{ display: "flex" }}>
@@ -439,10 +491,12 @@ const DetailBoard = (props) => {
                   whiteSpace: "nowrap",
                 }}
               >
-                {item == null ? null : (
+                {oneBoard === "" ? null : (
                   <span>
-                    <RiVipCrownFill color={findTier(tierSelect(item.point))} />{" "}
-                    {item.writer}
+                    <RiVipCrownFill
+                      color={findTier(tierSelect(oneBoard.point))}
+                    />{" "}
+                    {oneBoard.writer}
                   </span>
                 )}
               </p>
@@ -455,14 +509,14 @@ const DetailBoard = (props) => {
                 padding: "10px",
               }}
             >
-              {item == null ? null : item.content}
+              {oneBoard === "" ? null : oneBoard.content}
             </Card.Text>
             <div style={{ marginTop: "30px", textAlign: "center" }}>
-              {item == null
+              {oneBoard === ""
                 ? null
-                : item.tag === "not"
+                : oneBoard.tag === "not"
                 ? null
-                : item.tagList.map((item, index) => {
+                : oneBoard.tagList.map((item, index) => {
                     return (
                       <span
                         style={{
@@ -525,10 +579,10 @@ const DetailBoard = (props) => {
                 borderBottom: "2px solid #2D4059",
               }}
             >
-              {item == null
+              {oneBoard === ""
                 ? null
-                : item.suggestion
-                ? item.suggestion + " 원"
+                : oneBoard.suggestion
+                ? oneBoard.suggestion + " 원"
                 : "없음"}
             </div>
           </div>
@@ -680,7 +734,7 @@ const DetailBoard = (props) => {
             borderRadius: "7px",
           }}
         >
-          {item == null ? null : item.end === 0 ? (
+          {oneBoard === "" ? null : oneBoard.end === 0 ? (
             <div
               style={{
                 width: "80%",
@@ -704,7 +758,7 @@ const DetailBoard = (props) => {
               <span style={{ fontSize: "32px" }}>원</span>
             </div>
           ) : null}
-          {item == null ? null : item.end === 0 ? (
+          {oneBoard === "" ? null : oneBoard.end === 0 ? (
             <div style={{ fontSize: "24px" }}>
               {!userInfo.nick ? "익명" : userInfo.nick} 님의 <br />
               평가금액은 ... ?
@@ -716,7 +770,7 @@ const DetailBoard = (props) => {
               <span style={{ color: "#EA5455" }}>최종평가금액은 .. ?</span>
             </div>
           )}
-          {item == null ? null : item.end === 0 ? (
+          {oneBoard === "" ? null : oneBoard.end === 0 ? (
             <div style={{ width: "80%" }}>
               <div
                 style={{
@@ -835,67 +889,87 @@ const DetailBoard = (props) => {
           <div style={{ fontSize: "24px" }}>
             <GrView />
             <span style={{ padding: "0 10px" }}>
-              {item == null ? null : item.rcount}
+              {oneBoard === "" ? null : oneBoard.rcount}
             </span>
-            <span id="like" className="">
-              <AiFillLike
-                onClick={async (e) => {
-                  let like = document.getElementById("like");
-                  let dislike = document.getElementById("dislike");
-                  console.log(like);
-                  await axios({
-                    url: "/like",
-                    method: "get",
-                    params: {
-                      mno: userInfo.mno,
-                      bno: item.bno,
-                    },
-                  }).then((res) => {
-                    readList();
-                  });
-
-                  if (like.getAttribute("class") === "") {
-                    dislike.setAttribute("class", "");
-                    like.setAttribute("class", "active");
-                  } else if (like.getAttribute("class") === "active") {
-                    like.setAttribute("class", "");
+            <AiFillLike
+              color={likecolor}
+              onClick={async (e) => {
+                if (!userInfo) {
+                  handleLoginLikeShow();
+                  return;
+                }
+                await axios({
+                  url: "/like",
+                  method: "get",
+                  params: {
+                    mno: userInfo.mno,
+                    bno: oneBoard.bno,
+                  },
+                }).then((res) => {
+                  if (res.data.checklike === 0 && res.data.checkdislike === 0) {
+                    Setlikecolor("");
+                    Setdislikecolor("");
+                  } else if (
+                    res.data.checklike === 1 &&
+                    res.data.checkdislike === 0
+                  ) {
+                    Setlikecolor("#EA5455");
+                    Setdislikecolor("");
+                  } else if (
+                    res.data.checklike === 0 &&
+                    res.data.checkdislike === 1
+                  ) {
+                    Setlikecolor("");
+                    Setdislikecolor("#F07B3F");
                   }
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            </span>
-            <span style={{ padding: "0 10px" }}>
-              {item == null ? null : item.blike}
-            </span>
-            <span id="dislike" className="">
-              <AiFillDislike
-                onClick={async (e) => {
-                  let like = document.getElementById("like");
-                  let dislike = document.getElementById("dislike");
-                  console.log(dislike);
-                  await axios({
-                    url: "/dislike",
-                    method: "get",
-                    params: {
-                      mno: userInfo.mno,
-                      bno: item.bno,
-                    },
-                  }).then((res) => {
-                    readList();
-                  });
 
-                  if (dislike.getAttribute("class") === "") {
-                    like.setAttribute("class", "");
-                    dislike.setAttribute("class", "active");
-                  } else if (dislike.getAttribute("class") === "active") {
-                    dislike.setAttribute("class", "");
-                  }
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            </span>
+                  read();
+                });
+              }}
+              style={{ cursor: "pointer" }}
+            />
             <span style={{ padding: "0 10px" }}>
-              {item == null ? null : item.bdislike}
+              {oneBoard === "" ? null : oneBoard.blike}
+            </span>
+            <AiFillDislike
+              color={dislikecolor}
+              onClick={async (e) => {
+                if (!userInfo) {
+                  handleLoginLikeShow();
+                  return;
+                }
+                await axios({
+                  url: "/dislike",
+                  method: "get",
+                  params: {
+                    mno: userInfo.mno,
+                    bno: oneBoard.bno,
+                  },
+                }).then((res) => {
+                  if (res.data.checklike === 0 && res.data.checkdislike === 0) {
+                    Setlikecolor("");
+                    Setdislikecolor("");
+                  } else if (
+                    res.data.checklike === 1 &&
+                    res.data.checkdislike === 0
+                  ) {
+                    Setlikecolor("#EA5455");
+                    Setdislikecolor("");
+                  } else if (
+                    res.data.checklike === 0 &&
+                    res.data.checkdislike === 1
+                  ) {
+                    Setlikecolor("");
+                    Setdislikecolor("#F07B3F");
+                  }
+
+                  read();
+                });
+              }}
+              style={{ cursor: "pointer" }}
+            />
+            <span style={{ padding: "0 10px" }}>
+              {oneBoard === "" ? null : oneBoard.bdislike}
             </span>
           </div>
         </div>
@@ -920,8 +994,8 @@ const DetailBoard = (props) => {
                   url: "http://localhost:3000/InsertReply",
                   method: "post",
                   data: {
-                    mno: userInfo.mno,
-                    bno: item.bno,
+                    mno: userInfo ? userInfo.mno : null,
+                    bno: oneBoard.bno,
                     replyer: userInfo.nick ? userInfo.nick : "anonymous",
                     rcontent: rcontent.value,
                   },
@@ -977,7 +1051,7 @@ const DetailBoard = (props) => {
                 url: "/RegisterValue",
                 method: "POST",
                 data: {
-                  bno: item.bno,
+                  bno: oneBoard.bno,
                   price: price.value,
                 },
               }).then((res) => {
@@ -1045,9 +1119,36 @@ const DetailBoard = (props) => {
       </Modal>
       {/* login modal end */}
 
-      {/* value end button  start*/}
-
-      {/* value end button  end*/}
+      {/* likelogin modal start */}
+      <Modal
+        show={loginLikeShow}
+        onHide={handleLoginLikeShow}
+        style={{ fontFamily: "'Do Hyeon', sans-serif" }}
+      >
+        <Modal.Header>
+          <Modal.Title>⚠️ 로그인이 필요한 서비스입니다! ⚠️</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          좋아요 및 싫어요를 하시려면 로그인이 필요합니다.
+          <br />
+          로그인을 하시거나 회원이 아니시라면 회원가입 후 이용 부탁드립니다.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleLoginLikeClose}>
+            취소
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleLoginLikeClose();
+              navigate("/login");
+            }}
+          >
+            로그인하러 가기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* likelogin modal end */}
     </div>
   );
 };

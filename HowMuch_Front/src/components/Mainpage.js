@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Modal, Nav, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { SiCashapp } from "react-icons/si";
 import styled from "styled-components";
@@ -89,6 +89,13 @@ const Mainpage = () => {
   console.log(csrf);
 
   // end cookie
+
+  // modal control
+  const [loginShow, setloginShow] = useState(false);
+
+  const handleLoginClose = () => setloginShow(false);
+  const handleLoginShow = () => setloginShow(true);
+  // modal control end
 
   let currentImageWidth = document.documentElement.clientWidth;
 
@@ -272,7 +279,7 @@ const Mainpage = () => {
               </Nav.Link>
               <Nav.Link
                 onClick={() => {
-                  checkUser ? navigate("/mypage") : navigate("/login");
+                  checkUser ? navigate("/mypage") : handleLoginShow();
                 }}
                 style={{ color: "white", fontSize: "24px" }}
               >
@@ -326,6 +333,23 @@ const Mainpage = () => {
               </span>
             </p>
             <Button
+              id="startBtn"
+              onMouseEnter={() => {
+                let startBtn = document.getElementById("startBtn");
+
+                startBtn.setAttribute(
+                  "style",
+                  "border: none; width: 250px; font-size: 25px; background-color: #EB2A19;"
+                );
+              }}
+              onMouseLeave={() => {
+                let startBtn = document.getElementById("startBtn");
+
+                startBtn.setAttribute(
+                  "style",
+                  "border: none; width: 250px; font-size: 25px; background-color: #EA5455;"
+                );
+              }}
               onClick={() => {
                 if (checkUser) {
                   navigate("/register");
@@ -333,7 +357,12 @@ const Mainpage = () => {
                   navigate("/login");
                 }
               }}
-              style={{ backgroundColor: "#EA5455", border: "none" }}
+              style={{
+                backgroundColor: "#EA5455",
+                border: "none",
+                width: "250px",
+                fontSize: "25px",
+              }}
             >
               시작하기
             </Button>
@@ -569,6 +598,37 @@ const Mainpage = () => {
       >
         <BiArrowToTop />
       </TopBtn>
+
+      {/* login modal start */}
+      <Modal
+        show={loginShow}
+        onHide={handleLoginShow}
+        style={{ fontFamily: "'Do Hyeon', sans-serif" }}
+      >
+        <Modal.Header>
+          <Modal.Title>⚠️ 로그인이 필요한 서비스입니다! ⚠️</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          포인트를 확인하시려면 로그인이 필요합니다.
+          <br />
+          로그인을 하시거나 회원이 아니시라면 회원가입 후 이용 부탁드립니다.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleLoginClose}>
+            취소
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleLoginClose();
+              navigate("/login");
+            }}
+          >
+            로그인하러 가기
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* login modal end */}
     </div>
   );
 };

@@ -57,7 +57,7 @@ const ItemCard = (props) => {
   // tier reader end
 
   return (
-    <div style={{ margin: "20px auto" }}>
+    <div style={{ margin: "20px auto", cursor: "pointer" }}>
       <Card style={{ width: "300px", color: "white", padding: "10px" }}>
         <Card.Img
           variant="top"
