@@ -209,6 +209,7 @@ const ReplyPagination = (props) => {
                           params: {
                             mno: userInfo.mno,
                             rno: item.rno,
+                            bno: props.bno,
                           },
                         }).then(async (res) => {
                           await readReplyList();
@@ -238,6 +239,7 @@ const ReplyPagination = (props) => {
                           params: {
                             rno: item.rno,
                             mno: userInfo.mno,
+                            bno: props.bno,
                           },
                         }).then(async (res) => {
                           await readReplyList();
