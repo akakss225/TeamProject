@@ -26,6 +26,8 @@ let member = "";
 
 let board = "";
 
+let oneBoard = "";
+
 let reply = "";
 
 let hotBoard = "";
@@ -121,6 +123,17 @@ function boardReducer(state = board, actions) {
   return state;
 }
 
+function oneBoardReducer(state = oneBoard, actions) {
+  if (actions.type === "oneboard") {
+    let copy = { ...state };
+
+    copy = actions.payload;
+
+    return copy;
+  }
+  return state;
+}
+
 function hotBoardReducer(state = hotBoard, actions) {
   if (actions.type === "readHotList") {
     let copy = [...state];
@@ -182,6 +195,7 @@ let store = createStore(
   combineReducers({
     memberReducer,
     boardReducer,
+    oneBoardReducer,
     hotBoardReducer,
     replyReducer,
     valueReducer,

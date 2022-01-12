@@ -8,8 +8,6 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 
 const Account = () => {
-  let API_URL = "http://localhost:8181";
-
   let dispatch = useDispatch();
 
   let navigate = useNavigate();
@@ -115,7 +113,7 @@ const Account = () => {
   // axios
   const idSameCheck = async (id) => {
     await axios
-      .get(API_URL + "/findEmail?email=" + id)
+      .get("/findEmail?email=" + id)
       .then((result) => {
         // console.log(result.data.nick);
         if (result.data.nick) {
@@ -132,7 +130,7 @@ const Account = () => {
   };
   const nickSameCheck = async (nick) => {
     await axios
-      .get(API_URL + "/findNick?nick=" + nick)
+      .get("/findNick?nick=" + nick)
       .then((result) => {
         console.log(result.data.nick);
         if (result.data.email) {

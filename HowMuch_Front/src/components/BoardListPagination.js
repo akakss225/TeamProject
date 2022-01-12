@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { RiVipCrownFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const BoardListPagination = () => {
   let state = useSelector((state) => {
@@ -13,6 +14,25 @@ const BoardListPagination = () => {
   });
 
   let navigate = useNavigate();
+
+  let dispatch = useDispatch();
+
+  const read = async (bno) => {
+    await axios({
+      url: "/read",
+      method: "get",
+      params: {
+        bno: bno,
+      },
+    }).then((res) => {
+      console.log(res.data);
+
+      dispatch({
+        type: "oneboard",
+        payload: res.data,
+      });
+    });
+  };
 
   let boardState = state.boardReducer;
 
@@ -95,6 +115,7 @@ const BoardListPagination = () => {
                   className="row"
                   key={index}
                   onClick={() => {
+                    read(item.bno);
                     navigate("/detail/" + item.bno);
                     window.scrollTo(0, 0);
                   }}

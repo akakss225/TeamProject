@@ -12,11 +12,9 @@ import axios from "axios";
 const Mypage = () => {
   let navigate = useNavigate();
 
-  let API_URL = "http://localhost:3000";
-
   const getMyInfo = async () => {
     await axios
-      .get(API_URL + "/userinfo")
+      .get("/userinfo")
       .then((result) => {
         console.log(result.data);
         SetInfo(result.data);
@@ -77,7 +75,7 @@ const Mypage = () => {
 
   const getBoardRank = async () => {
     await axios
-      .get(API_URL + "/BoardRank")
+      .get("/BoardRank")
       .then((result) => {
         console.log(result.data);
         SetboardRank(result.data);
@@ -90,7 +88,7 @@ const Mypage = () => {
 
   const getTierRank = async () => {
     await axios
-      .get(API_URL + "/TierRank")
+      .get("/TierRank")
       .then((result) => {
         console.log(result.data);
         SetmemberRank(result.data);

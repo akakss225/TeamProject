@@ -69,7 +69,7 @@ const ItemCard = (props) => {
             width: "280px",
             height: "200px",
             objectFit: "cover",
-            objectPosition: "center top;",
+            objectPosition: "50% 0%",
           }}
         />
         <Card.Body style={{ padding: "1rem 0" }}>
@@ -113,19 +113,6 @@ const ItemCard = (props) => {
               )}
             </p>
           </div>
-
-          {/* <Card.Text
-            style={{
-              height: "150px",
-              backgroundColor: "#2D4059",
-              borderRadius: "5px",
-              padding: "10px",
-              overflow: "hidden",
-            }}
-          >
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </Card.Text> */}
           <div style={{ display: "flex", alignItems: "center" }}>
             <p
               style={{

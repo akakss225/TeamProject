@@ -21,7 +21,7 @@ const Modify = () => {
   let dispatch = useDispatch();
 
   const readList = async () => {
-    await axios.get("http://localhost:3000/readList").then((res) => {
+    await axios.get("/readList").then((res) => {
       console.log("success");
       console.log(res.data);
 

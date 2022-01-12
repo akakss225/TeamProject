@@ -38,7 +38,7 @@ const BoardMain = () => {
   let [checkUser, SetCheckUser] = useState("");
 
   const readList = async () => {
-    await axios.get("http://localhost:8181/readList").then((res) => {
+    await axios.get("/readList").then((res) => {
       console.log("success");
       console.log(res.data);
       dispatch({
@@ -202,6 +202,25 @@ const BoardMain = () => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "20px" }}>
+            <select
+              id="tagSelect"
+              className="form-select"
+              aria-label="Default select example"
+              onChange={(e) => {
+                SetSelect(
+                  typeChanger(e.target.options[e.target.selectedIndex].text)
+                );
+              }}
+            >
+              <option defaultValue>검색항목</option>
+              <option value="1">제목</option>
+              <option value="2">내용</option>
+              <option value="3">작성자</option>
+              <option value="4">태그</option>
+            </select>
+          </div>
+          <input id="search" type="text" placeholder="검색어를 입력해주세요" />
           <FaSearch
             onClick={async () => {
               let search = document.getElementById("search").value;
@@ -229,27 +248,8 @@ const BoardMain = () => {
                 });
               });
             }}
-            style={{ fontSize: "24px", marginRight: "10px", cursor: "pointer" }}
+            style={{ fontSize: "24px", marginLeft: "10px", cursor: "pointer" }}
           />
-          <input id="search" type="text" placeholder="검색어를 입력해주세요" />
-          <div style={{ marginLeft: "20px" }}>
-            <select
-              id="tagSelect"
-              className="form-select"
-              aria-label="Default select example"
-              onChange={(e) => {
-                SetSelect(
-                  typeChanger(e.target.options[e.target.selectedIndex].text)
-                );
-              }}
-            >
-              <option defaultValue>검색항목</option>
-              <option value="1">제목</option>
-              <option value="2">내용</option>
-              <option value="3">작성자</option>
-              <option value="4">태그</option>
-            </select>
-          </div>
         </div>
         <div
           style={{

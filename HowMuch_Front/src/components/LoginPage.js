@@ -124,7 +124,7 @@ const LoginPage = () => {
           />
         </div>
         <div className="row">
-          <form id="form" method="post" action="http://localhost:8181/login">
+          <form id="form" method="post" action="/login">
             <div
               className="col d-flex flex-column justify-content-center align-items-center"
               style={{ paddingTop: "80px" }}

@@ -39,7 +39,7 @@ const ReplyPagination = (props) => {
 
   const readReplyList = async () => {
     await axios({
-      url: "http://localhost:8181/ReadReplyList",
+      url: "/ReadReplyList",
       params: {
         bno: props.bno,
       },

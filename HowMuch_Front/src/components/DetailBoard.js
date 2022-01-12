@@ -20,6 +20,10 @@ const DetailBoard = (props) => {
 
   let dispatch = useDispatch();
 
+  let { bno } = useParams();
+
+  console.log(bno);
+
   // cookie
 
   let csrf = new Cookies().get("XSRF-TOKEN");
@@ -28,7 +32,7 @@ const DetailBoard = (props) => {
   // end cookie
 
   const readList = async () => {
-    await axios.get("http://localhost:3000/readList").then((res) => {
+    await axios.get("/readList").then((res) => {
       console.log("success");
       console.log(res.data);
       dispatch({
@@ -38,11 +42,9 @@ const DetailBoard = (props) => {
     });
   };
 
-  let API_URL = "http://localhost:3000";
-
   const getMyInfo = async () => {
     await axios
-      .get(API_URL + "/userinfo")
+      .get("/userinfo")
       .then((result) => {
         console.log(result.data);
         SetInfo(result.data);
@@ -56,7 +58,7 @@ const DetailBoard = (props) => {
 
   const readReplyList = async () => {
     await axios({
-      url: "http://localhost:8181/ReadReplyList",
+      url: "/ReadReplyList",
       params: {
         bno: bno,
       },
@@ -71,7 +73,7 @@ const DetailBoard = (props) => {
 
   const readValueList = async () => {
     await axios({
-      url: "http://localhost:8181/log",
+      url: "/log",
       params: {
         bno: bno,
       },
@@ -87,7 +89,7 @@ const DetailBoard = (props) => {
 
   const readCalculateValue = async () => {
     await axios({
-      url: "http://localhost:8181/cal",
+      url: "/cal",
       params: {
         bno: bno,
       },
@@ -100,7 +102,7 @@ const DetailBoard = (props) => {
 
   const upreadCount = async () => {
     await axios({
-      url: "http://localhost:8181/rcount",
+      url: "/rcount",
       params: {
         bno: bno,
       },
@@ -111,7 +113,7 @@ const DetailBoard = (props) => {
     });
   };
 
-  const read = async () => {
+  const read = async (bno) => {
     await axios({
       url: "/read",
       method: "get",
@@ -121,11 +123,12 @@ const DetailBoard = (props) => {
     }).then((res) => {
       console.log(res.data);
 
-      SetoneBoard(res.data);
+      dispatch({
+        type: "oneboard",
+        payload: res.data,
+      });
     });
   };
-
-  let [oneBoard, SetoneBoard] = useState("");
 
   // like, dislike color start
   let [likecolor, Setlikecolor] = useState("");
@@ -163,43 +166,24 @@ const DetailBoard = (props) => {
     });
   };
 
-  function resize(obj) {
-    obj.style.height = "1px";
-    obj.style.height = 12 + obj.scrollHeight + "px";
-  }
-
   useEffect(() => {
     window.scrollTo(0, 0);
     resetBoolean();
-    readList();
     getMyInfo();
-    readReplyList();
+    read(bno);
     readValueList();
+    readList();
     readCalculateValue();
-    read();
     upreadCount();
     readedBoard();
+    readReplyList();
   }, []);
-
-  let { bno } = useParams();
-  console.log(bno);
 
   let state = useSelector((state) => {
     return state;
   });
 
-  let boardState = state.boardReducer;
-
-  let findItemBoard =
-    boardState === ""
-      ? null
-      : boardState.find((item) => {
-          return item.bno === parseInt(bno);
-        });
-
-  console.log(findItemBoard);
-
-  let item = findItemBoard;
+  let oneBoard = state.oneBoardReducer;
 
   let valueState = state.valueReducer;
 
@@ -433,6 +417,7 @@ const DetailBoard = (props) => {
                   });
 
                   navigate("/detail/" + oneBoard.bno);
+                  read(oneBoard.bno);
                 }}
               >
                 평가종료
@@ -516,16 +501,19 @@ const DetailBoard = (props) => {
 
             <Card.Text
               style={{
-                backgroundColor: "#2D4059",
+                border: "2px solid #2D4059",
                 borderRadius: "5px",
                 padding: "10px",
               }}
             >
               <pre
                 style={{
+                  color: "black",
                   fontSize: "20px",
                   fontFamily: "'Do Hyeon', sans-serif",
                   textAlign: "left",
+                  overflow: "auto",
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {oneBoard === "" ? null : oneBoard.content}
@@ -771,9 +759,7 @@ const DetailBoard = (props) => {
                   borderBottom: "2px solid #EA5455",
                 }}
               >
-                {!calculateValue.avg
-                  ? "없음"
-                  : "평균가: " + calculateValue.avg + " 원"}
+                {!calculateValue.avg ? "없음" : "평균가: " + calculateValue.avg}
               </div>
               <span style={{ fontSize: "32px" }}>원</span>
             </div>
@@ -943,7 +929,7 @@ const DetailBoard = (props) => {
                     Setdislikecolor("#F07B3F");
                   }
 
-                  read();
+                  read(bno);
                 });
               }}
               style={{ cursor: "pointer" }}
@@ -983,7 +969,7 @@ const DetailBoard = (props) => {
                     Setdislikecolor("#F07B3F");
                   }
 
-                  read();
+                  read(bno);
                 });
               }}
               style={{ cursor: "pointer" }}
