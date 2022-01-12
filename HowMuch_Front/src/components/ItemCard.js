@@ -68,6 +68,8 @@ const ItemCard = (props) => {
             border: "2px solid #2D4059",
             width: "280px",
             height: "200px",
+            objectFit: "cover",
+            objectPosition: "center top;",
           }}
         />
         <Card.Body style={{ padding: "1rem 0" }}>

@@ -163,6 +163,11 @@ const DetailBoard = (props) => {
     });
   };
 
+  function resize(obj) {
+    obj.style.height = "1px";
+    obj.style.height = 12 + obj.scrollHeight + "px";
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0);
     resetBoolean();
@@ -352,7 +357,7 @@ const DetailBoard = (props) => {
               글목록
             </Button>
             {valueState === "" ? null : valueState.length > 0 ? null : !(
-                userInfo && !oneBoard === ""
+                userInfo && oneBoard !== ""
               ) ? null : !(userInfo.nick === oneBoard.writer) ? null : (
               <Button
                 style={{
@@ -368,7 +373,7 @@ const DetailBoard = (props) => {
                 글수정
               </Button>
             )}
-            {!(userInfo && !oneBoard === "") ? null : !(
+            {!(userInfo && oneBoard !== "") ? null : !(
                 userInfo.nick === oneBoard.writer
               ) ? null : (
               <Button
@@ -439,9 +444,16 @@ const DetailBoard = (props) => {
       {/* detail card */}
       <div
         className="container-lg d-flex justify-content-center"
-        style={{ marginTop: "50px" }}
+        style={{ marginTop: "50px", height: "auto" }}
       >
-        <Card style={{ width: "800px", color: "white", padding: "10px" }}>
+        <Card
+          style={{
+            width: "800px",
+            height: "auto",
+            color: "white",
+            padding: "10px",
+          }}
+        >
           {oneBoard === "" ? null : oneBoard.imageList === null ? (
             <Card.Img
               variant="top"
@@ -509,7 +521,15 @@ const DetailBoard = (props) => {
                 padding: "10px",
               }}
             >
-              {oneBoard === "" ? null : oneBoard.content}
+              <pre
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "'Do Hyeon', sans-serif",
+                  textAlign: "left",
+                }}
+              >
+                {oneBoard === "" ? null : oneBoard.content}
+              </pre>
             </Card.Text>
             <div style={{ marginTop: "30px", textAlign: "center" }}>
               {oneBoard === ""

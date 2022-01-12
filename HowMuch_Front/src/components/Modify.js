@@ -531,6 +531,13 @@ const Modify = () => {
                     }
                   }
 
+                  console.log(
+                    typeof contentInput.value.replace(
+                      /(?:\r\n|\r|\n)/g,
+                      "<br/>"
+                    )
+                  );
+
                   await axios({
                     url: "/update",
                     method: "post",
@@ -539,7 +546,7 @@ const Modify = () => {
                       title: titleInput.value,
                       content: contentInput.value,
                       imageList: postImgURL.length > 0 ? postImgURL : null,
-                      tagList: tagArr.length > 0 ? tagArr : null,
+                      tagList: tagArr.length > 0 ? tagArr : ["not"],
                       suggestion: suggestInput.value
                         ? suggestInput.value
                         : null,
