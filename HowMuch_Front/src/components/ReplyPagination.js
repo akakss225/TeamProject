@@ -118,8 +118,8 @@ const ReplyPagination = (props) => {
 
   // styled component
   let Reply = styled("div")`
-    background-color: #2d4059;
-    color: white;
+    border: 1px solid #ea5455;
+    color: black;
     display: flex;
     justify-content: space-between;
     padding: 10px;

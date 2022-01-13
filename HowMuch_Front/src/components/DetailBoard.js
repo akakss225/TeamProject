@@ -134,13 +134,13 @@ const DetailBoard = (props) => {
   };
 
   // like, dislike color start
-  let [likecolor, Setlikecolor] = useState("");
+  // let [likecolor, Setlikecolor] = useState("");
 
-  let [dislikecolor, Setdislikecolor] = useState("");
+  // let [dislikecolor, Setdislikecolor] = useState("");
 
   // like, dislike color end
 
-  const readedBoard = async () => {
+  const readedBoard = async (bno) => {
     await axios({
       url: "/readed",
       method: "get",
@@ -151,20 +151,41 @@ const DetailBoard = (props) => {
       console.log("좋아요 표시기");
       console.log(res.data);
 
-      if (res.data.checklike === 1) {
+      console.log(res.data.checklike === 0 && res.data.checkdislike === 0);
+
+      if (res.data.checklike === 0 && res.data.checkdislike === 0) {
         console.log("추천 이력 있음");
-        Setlikecolor("#EA5455");
-      } else if (res.data.checklike === 0) {
-        console.log("추천 이력 없음");
-        Setlikecolor("");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "",
+            dislikecolor: "",
+          },
+        });
       }
 
-      if (res.data.checkdislike === 1) {
+      console.log(res.data.checklike === 1 && res.data.checkdislike === 0);
+
+      if (res.data.checklike === 1 && res.data.checkdislike === 0) {
+        console.log("추천 이력 있음");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "#EA5455",
+            dislikecolor: "",
+          },
+        });
+      }
+
+      if (res.data.checklike === 0 && res.data.checkdislike === 1) {
         console.log("비추천 이력 없음");
-        Setdislikecolor("#F07B3F");
-      } else if (res.data.checkdislike === 0) {
-        console.log("비추천 이력 없음");
-        Setdislikecolor("");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "",
+            dislikecolor: "#F07B3F",
+          },
+        });
       }
     });
   };
@@ -178,7 +199,7 @@ const DetailBoard = (props) => {
     readList();
     readCalculateValue(bno);
     upreadCount();
-    readedBoard();
+    readedBoard(bno);
     readReplyList();
   }, []);
 
@@ -191,6 +212,10 @@ const DetailBoard = (props) => {
   let valueState = state.valueReducer;
 
   let calculateValue = state.caculateReducer;
+
+  let usercolor = state.likecolorReducer;
+
+  console.log(usercolor);
 
   // tier reader
   const tierSelect = (point) => {
@@ -233,7 +258,15 @@ const DetailBoard = (props) => {
 
   // modal control
 
-  const resetBoolean = () => {};
+  const resetBoolean = () => {
+    setwarnvalueShow(false);
+    setloginLikeShow(false);
+    setloginLikeShow(false);
+    Setwarn(false);
+    SetwarnDuplication(false);
+    SetwarnSelfValue(false);
+    SetwarnMinus(false);
+  };
 
   const [warnvalueshow, setwarnvalueShow] = useState(false);
 
@@ -255,6 +288,10 @@ const DetailBoard = (props) => {
   const [warnSelfValue, SetwarnSelfValue] = useState(false);
   const [warnMinus, SetwarnMinus] = useState(false);
   // modal control end
+
+  useEffect(() => {
+    resetBoolean();
+  }, [oneBoard]);
 
   // resize screen
 
@@ -712,10 +749,12 @@ const DetailBoard = (props) => {
                     display: "inline-block",
                     maxWidth: "700px",
                     height: "40px",
-                    backgroundColor: "#EA5455",
+                    border: "3px solid #EA5455",
+                    color: "black",
                     borderRadius: "5px",
                     padding: "10px",
                     marginBottom: "0",
+                    lineHeight: "0",
                     marginRight: "10px",
                     overflow: "hidden",
                   }}
@@ -817,7 +856,6 @@ const DetailBoard = (props) => {
                 >
                   <input
                     id="price"
-                    value=""
                     style={{
                       color: "black",
                       width: "70%",
@@ -898,7 +936,7 @@ const DetailBoard = (props) => {
                 <div
                   style={{ borderBottom: "2px solid #EA5455", width: "60%" }}
                 >
-                  <input
+                  <span
                     style={{
                       fontFamily: "sans-serif",
                       fontWeight: "bold",
@@ -909,11 +947,13 @@ const DetailBoard = (props) => {
                       backgroundColor: "transparent",
                       textAlign: "center",
                     }}
-                    value={calculateValue.avg
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    disabled
-                  />
+                  >
+                    {calculateValue.avg >= 0
+                      ? calculateValue.avg
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      : null}
+                  </span>
                 </div>
                 <span style={{ fontSize: "32px" }}>원</span>
               </div>
@@ -929,7 +969,7 @@ const DetailBoard = (props) => {
               {oneBoard === "" ? null : oneBoard.rcount}
             </span>
             <AiFillLike
-              color={likecolor}
+              color={usercolor.likecolor}
               onClick={async (e) => {
                 if (!userInfo) {
                   handleLoginLikeShow();
@@ -944,20 +984,32 @@ const DetailBoard = (props) => {
                   },
                 }).then((res) => {
                   if (res.data.checklike === 0 && res.data.checkdislike === 0) {
-                    Setlikecolor("");
-                    Setdislikecolor("");
-                  } else if (
-                    res.data.checklike === 1 &&
-                    res.data.checkdislike === 0
-                  ) {
-                    Setlikecolor("#EA5455");
-                    Setdislikecolor("");
-                  } else if (
-                    res.data.checklike === 0 &&
-                    res.data.checkdislike === 1
-                  ) {
-                    Setlikecolor("");
-                    Setdislikecolor("#F07B3F");
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "",
+                        dislikecolor: "",
+                      },
+                    });
+                  }
+
+                  if (res.data.checklike === 1 && res.data.checkdislike === 0) {
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "#EA5455",
+                        dislikecolor: "",
+                      },
+                    });
+                  }
+                  if (res.data.checklike === 0 && res.data.checkdislike === 1) {
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "",
+                        dislikecolor: "#F07B3F",
+                      },
+                    });
                   }
 
                   read(bno);
@@ -969,7 +1021,7 @@ const DetailBoard = (props) => {
               {oneBoard === "" ? null : oneBoard.blike}
             </span>
             <AiFillDislike
-              color={dislikecolor}
+              color={usercolor.dislikecolor}
               onClick={async (e) => {
                 if (!userInfo) {
                   handleLoginLikeShow();
@@ -984,20 +1036,31 @@ const DetailBoard = (props) => {
                   },
                 }).then((res) => {
                   if (res.data.checklike === 0 && res.data.checkdislike === 0) {
-                    Setlikecolor("");
-                    Setdislikecolor("");
-                  } else if (
-                    res.data.checklike === 1 &&
-                    res.data.checkdislike === 0
-                  ) {
-                    Setlikecolor("#EA5455");
-                    Setdislikecolor("");
-                  } else if (
-                    res.data.checklike === 0 &&
-                    res.data.checkdislike === 1
-                  ) {
-                    Setlikecolor("");
-                    Setdislikecolor("#F07B3F");
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "",
+                        dislikecolor: "",
+                      },
+                    });
+                  }
+                  if (res.data.checklike === 1 && res.data.checkdislike === 0) {
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "#EA5455",
+                        dislikecolor: "",
+                      },
+                    });
+                  }
+                  if (res.data.checklike === 0 && res.data.checkdislike === 1) {
+                    dispatch({
+                      type: "userlikecolor",
+                      payload: {
+                        likecolor: "",
+                        dislikecolor: "#F07B3F",
+                      },
+                    });
                   }
 
                   read(bno);

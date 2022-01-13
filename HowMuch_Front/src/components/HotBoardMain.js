@@ -91,7 +91,7 @@ const HotBoardMain = () => {
         <div className="container-lg" style={{ margin: "50px auto" }}>
           <div className="row">
             {currentItems === "" ? (
-              <p style={{ fontSize: "32px" }}>아직 인기 게시물이 없습니다.</p>
+              <p style={{ fontSize: "32px" }}>관련 게시물이 없습니다.</p>
             ) : (
               currentItems &&
               currentItems.map((item, index) => (

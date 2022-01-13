@@ -81,6 +81,52 @@ const BoardListPagination = () => {
     });
   };
 
+  const readedBoard = async (bno) => {
+    await axios({
+      url: "/readed",
+      method: "get",
+      params: {
+        bno: bno,
+      },
+    }).then(async (res) => {
+      console.log("좋아요 표시기");
+      console.log(res.data);
+
+      if (res.data.checklike === 0 && res.data.checkdislike === 0) {
+        console.log("추천 이력 있음");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "",
+            dislikecolor: "",
+          },
+        });
+      }
+
+      if (res.data.checklike === 1 && res.data.checkdislike === 0) {
+        console.log("추천 이력 있음");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "#EA5455",
+            dislikecolor: "",
+          },
+        });
+      }
+
+      if (res.data.checklike === 0 && res.data.checkdislike === 1) {
+        console.log("비추천 이력 없음");
+        dispatch({
+          type: "userlikecolor",
+          payload: {
+            likecolor: "",
+            dislikecolor: "#F07B3F",
+          },
+        });
+      }
+    });
+  };
+
   let boardState = state.boardReducer;
 
   // tier reader
@@ -163,6 +209,7 @@ const BoardListPagination = () => {
                   key={index}
                   onClick={() => {
                     read(item.bno);
+                    readedBoard(item.bno);
                     readReplyList(item.bno);
                     readValueList(item.bno);
                     readCalculateValue(item.bno);

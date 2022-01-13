@@ -34,6 +34,8 @@ let value = "";
 
 let calculate = "";
 
+let likecolor = "";
+
 // const login = async (username, password) => {
 //   await axios
 //     .post(API_URL + "/login", {
@@ -159,6 +161,24 @@ function caculateReducer(state = calculate, actions) {
 
     return copy;
   }
+  if (actions.type === "resetcal") {
+    let copy = { ...state };
+
+    copy = "";
+
+    return copy;
+  }
+  return state;
+}
+
+function likecolorReducer(state = likecolor, actions) {
+  if (actions.type === "userlikecolor") {
+    let copy = "";
+
+    copy = { ...actions.payload };
+
+    return copy;
+  }
   return state;
 }
 
@@ -170,6 +190,7 @@ let store = createStore(
     replyReducer,
     valueReducer,
     caculateReducer,
+    likecolorReducer,
   })
 );
 
