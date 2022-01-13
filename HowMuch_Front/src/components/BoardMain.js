@@ -98,12 +98,15 @@ const BoardMain = () => {
                 <div
                   className="col-lg-4 d-flex justify-content-center"
                   key={index}
-                  onClick={() => {
-                    navigate("/detail/" + item.bno);
-                    console.log(item);
-                  }}
                 >
-                  <ItemCard item={item} />
+                  <div
+                    onClick={() => {
+                      navigate("/detail/" + item.bno);
+                      console.log(item);
+                    }}
+                  >
+                    <ItemCard item={item} />
+                  </div>
                 </div>
               ))
             )}

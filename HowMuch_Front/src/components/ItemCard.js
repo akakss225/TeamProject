@@ -135,12 +135,19 @@ const ItemCard = (props) => {
                 width: "250px",
                 fontSize: "24px",
                 borderBottom: "2px solid #2D4059",
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
               }}
             >
               {props.item == null
                 ? null
                 : props.item.suggestion
-                ? props.item.suggestion + " 원"
+                ? props.item.suggestion
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " 원"
                 : "없음"}
             </div>
           </div>

@@ -22,7 +22,7 @@ const DetailBoard = (props) => {
 
   let { bno } = useParams();
 
-  console.log(bno);
+  console.log("넘어온 bno는 = " + bno);
 
   // cookie
 
@@ -71,7 +71,7 @@ const DetailBoard = (props) => {
     });
   };
 
-  const readValueList = async () => {
+  const readValueList = async (bno) => {
     await axios({
       url: "/log",
       params: {
@@ -174,7 +174,7 @@ const DetailBoard = (props) => {
     resetBoolean();
     getMyInfo();
     read(bno);
-    readValueList();
+    readValueList(bno);
     readList();
     readCalculateValue(bno);
     upreadCount();
@@ -588,12 +588,16 @@ const DetailBoard = (props) => {
                 width: "400px",
                 fontSize: "24px",
                 borderBottom: "2px solid #2D4059",
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
               }}
             >
               {oneBoard === ""
                 ? null
                 : oneBoard.suggestion
-                ? oneBoard.suggestion + " 원"
+                ? oneBoard.suggestion
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " 원"
                 : "없음"}
             </div>
           </div>
@@ -629,9 +633,15 @@ const DetailBoard = (props) => {
                 width: "400px",
                 fontSize: "24px",
                 borderBottom: "2px solid #2D4059",
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
               }}
             >
-              {!calculateValue.min ? "없음" : calculateValue.min + " 원"}
+              {!calculateValue.min
+                ? "없음"
+                : calculateValue.min
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " 원"}
             </div>
           </div>
         </div>
@@ -666,9 +676,15 @@ const DetailBoard = (props) => {
                 width: "400px",
                 fontSize: "24px",
                 borderBottom: "2px solid #2D4059",
+                fontFamily: "sans-serif",
+                fontWeight: "bold",
               }}
             >
-              {!calculateValue.max ? "없음" : calculateValue.max + " 원"}
+              {!calculateValue.max
+                ? "없음"
+                : calculateValue.max
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " 원"}
             </div>
           </div>
         </div>
@@ -713,7 +729,15 @@ const DetailBoard = (props) => {
                       {item.rater}
                     </span>
                   }{" "}
-                  님 {item.price} 원{" "}
+                  님{" "}
+                  <span
+                    style={{ fontFamily: "sans-serif", fontWeight: "bold" }}
+                  >
+                    {item.price
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </span>{" "}
+                  원{" "}
                   {String(
                     new Date(+new Date(item.vdate) + 3240 * 10000)
                       .toISOString()
@@ -793,6 +817,7 @@ const DetailBoard = (props) => {
                 >
                   <input
                     id="price"
+                    value=""
                     style={{
                       color: "black",
                       width: "70%",
@@ -874,8 +899,9 @@ const DetailBoard = (props) => {
                   style={{ borderBottom: "2px solid #EA5455", width: "60%" }}
                 >
                   <input
-                    id="price"
                     style={{
+                      fontFamily: "sans-serif",
+                      fontWeight: "bold",
                       color: "black",
                       width: "70%",
                       fontSize: "24px",
@@ -883,7 +909,9 @@ const DetailBoard = (props) => {
                       backgroundColor: "transparent",
                       textAlign: "center",
                     }}
-                    defaultValue={calculateValue.avg}
+                    value={calculateValue.avg
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     disabled
                   />
                 </div>

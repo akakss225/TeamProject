@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { BiArrowToTop } from "react-icons/bi";
 import Cookies from "universal-cookie";
 import axios from "axios";
+import { userInfo } from "os";
 
 const Mainpage = () => {
   // redux
@@ -263,13 +264,23 @@ const Mainpage = () => {
                   <span>로그인</span>
                 )}
               </Nav.Link>
+              {checkUser ? null : (
+                <Nav.Link
+                  onClick={() => {
+                    navigate("/account");
+                  }}
+                  style={{ color: "white", fontSize: "24px" }}
+                >
+                  회원가입
+                </Nav.Link>
+              )}
               <Nav.Link
                 onClick={() => {
-                  navigate("/account");
+                  navigate("/boardmain");
                 }}
                 style={{ color: "white", fontSize: "24px" }}
               >
-                회원가입
+                글목록
               </Nav.Link>
               <Nav.Link
                 onClick={() => {
@@ -396,12 +407,15 @@ const Mainpage = () => {
                 <div
                   className="col-lg-4 d-flex justify-content-center"
                   key={index}
-                  onClick={() => {
-                    navigate("/detail/" + item.bno);
-                    console.log(item);
-                  }}
                 >
-                  <ItemCard item={item} />
+                  <div
+                    onClick={() => {
+                      navigate("/detail/" + item.bno);
+                      console.log(item);
+                    }}
+                  >
+                    <ItemCard item={item} />
+                  </div>
                 </div>
               );
             })
@@ -438,12 +452,15 @@ const Mainpage = () => {
                 <div
                   className="col-lg-4 d-flex justify-content-center"
                   key={index}
-                  onClick={() => {
-                    navigate("/detail/" + item.bno);
-                    console.log(item);
-                  }}
                 >
-                  <ItemCard item={item} />
+                  <div
+                    onClick={() => {
+                      navigate("/detail/" + item.bno);
+                      console.log(item);
+                    }}
+                  >
+                    <ItemCard item={item} />
+                  </div>
                 </div>
               );
             })
