@@ -22,8 +22,6 @@ console.log(csrf);
 // axios.defaults.xsrfHeaderName = "X-CSRF-TOKEN";
 // axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
 
-let member = "";
-
 let board = "";
 
 let oneBoard = "";
@@ -33,29 +31,6 @@ let reply = "";
 let hotBoard = "";
 
 let value = "";
-
-let API_URL = "http://localhost:3000";
-
-const signup = async (email, pw, nick) => {
-  await axios({
-    url: API_URL + "/signUp",
-    method: "post",
-    data: {
-      email: email,
-      pw: pw,
-      nick: nick,
-    },
-    headers: {
-      "XSRF-TOKEN": csrf,
-    },
-  })
-    .then((result) => {
-      console.log("success signup");
-      member = result.data;
-      console.log(member);
-    })
-    .catch(console.log("signup error"));
-};
 
 // const login = async (username, password) => {
 //   await axios
@@ -72,23 +47,6 @@ const signup = async (email, pw, nick) => {
 //       console.log(error);
 //     });
 // };
-
-function memberReducer(state = member, actions) {
-  if (actions.type === "signup") {
-    console.log("signup");
-
-    signup(actions.payload.email, actions.payload.pw, actions.payload.nick);
-
-    return state;
-  }
-  // if (actions.type === "login") {
-  //   login(actions.payload.username, actions.payload.password);
-  //   // test();
-
-  //   return state;
-  // }
-  return state;
-}
 
 function boardReducer(state = board, actions) {
   if (actions.type === "readList") {
@@ -193,7 +151,6 @@ function valueReducer(state = value, actions) {
 
 let store = createStore(
   combineReducers({
-    memberReducer,
     boardReducer,
     oneBoardReducer,
     hotBoardReducer,

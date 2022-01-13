@@ -6,11 +6,42 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import Cookies from "universal-cookie";
 
 const Account = () => {
   let dispatch = useDispatch();
 
   let navigate = useNavigate();
+
+  // cookie
+
+  let csrf = new Cookies().get("XSRF-TOKEN");
+  console.log(csrf);
+
+  // end cookie
+
+  const signup = async (email, pw, nick) => {
+    await axios({
+      url: "/signUp",
+      method: "post",
+      data: {
+        email: email,
+        pw: pw,
+        nick: nick,
+      },
+      headers: {
+        "XSRF-TOKEN": csrf,
+      },
+    })
+      .then((result) => {
+        console.log("success signup");
+        handleShow();
+      })
+      .catch((err) => {
+        console.log("signup error");
+        SetcheckSame(true);
+      });
+  };
 
   let [position, setPosition] = useState("");
 
@@ -18,6 +49,10 @@ const Account = () => {
 
   useEffect(() => {
     if (currentWidth > 770) {
+      setPosition("absolute");
+    }
+
+    if (currentWidth <= 770) {
       setPosition("absolute");
     }
   }, [currentWidth]);
@@ -53,6 +88,8 @@ const Account = () => {
   const [nickWarn, SetnickWarn] = useState(false);
   const [nickSame, SetnickSame] = useState("");
 
+  const [checkSame, SetcheckSame] = useState(false);
+
   const idInput = document.getElementById("ID");
   const pwInput = document.getElementById("PW");
   const pw2Input = document.getElementById("PW2");
@@ -80,19 +117,27 @@ const Account = () => {
     SetnickWarn(false);
     SetnickSame("");
     SetidSame("");
+    SetcheckSame(false);
   };
 
   // resize screen
 
   let [flexdir, Setflexdir] = useState("row nowrap");
 
+  let [margindir1, Setmargindir1] = useState("-70px");
+  let [margindir2, Setmargindir2] = useState("-165px");
+
   useEffect(() => {
     window.scrollTo(0, 0);
     if (currentWidth > 1200) {
       Setflexdir("row nowrap");
+      Setmargindir1("-70px");
+      Setmargindir2("-165px");
     }
     if (currentWidth <= 1200) {
       Setflexdir("column nowrap");
+      Setmargindir1("0px");
+      Setmargindir2("0px");
     }
   }, [flexdir, currentWidth]);
 
@@ -101,10 +146,14 @@ const Account = () => {
 
     if (screenWidth <= 1200) {
       Setflexdir("column nowrap");
+      Setmargindir1("0px");
+      Setmargindir2("0px");
     }
 
     if (screenWidth > 1200) {
       Setflexdir("row nowrap");
+      Setmargindir1("-70px");
+      Setmargindir2("-165px");
     }
   });
 
@@ -119,9 +168,11 @@ const Account = () => {
         if (result.data.nick) {
           resetShow();
           SetidSame("yes");
+          return true;
         } else {
           resetShow();
           SetidSame("no");
+          return false;
         }
       })
       .catch((error) => {
@@ -135,8 +186,10 @@ const Account = () => {
         console.log(result.data.nick);
         if (result.data.email) {
           SetnickSame("yes");
+          return true;
         } else {
           SetnickSame("no");
+          return false;
         }
       })
       .catch((error) => {
@@ -144,6 +197,75 @@ const Account = () => {
       });
   };
   // end exios
+
+  function enterkey() {
+    if (window.event.keyCode === 13) {
+      // 엔터키가 눌렸을 때
+
+      console.log("enter!!");
+
+      resetShow();
+
+      const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/; //한글
+      const specialText = /[~!@#$%<>^&*]/; //특수문자
+
+      const idInputArray = idInput.value.split("");
+      const nickInputArray = nickInput.value.split("");
+
+      if (!checkValue(idInput)) {
+        SetidCheck(true);
+        return;
+      }
+
+      if (!checkValue(pwInput)) {
+        SetpwCheck(true);
+        return;
+      }
+      if (!checkValue(pw2Input)) {
+        Setpw2Check(true);
+        return;
+      }
+      if (!checkValue(nickInput)) {
+        SetnickCheck(true);
+        return;
+      }
+      if (
+        !idInputArray.find((item) => item === "@") ||
+        !idInputArray.find((item) => item === ".")
+      ) {
+        SetidWarn(true);
+        idInput.value = "";
+        return;
+      }
+
+      if (!specialText.test(pwInput.value)) {
+        SetpwWarn(true);
+        pwInput.value = "";
+        return;
+      }
+
+      if (!(pwInput.value === pw2Input.value)) {
+        Setpw2Warn(true);
+        pw2Input.value = "";
+        return;
+      }
+      if (korean.test(nickInput.value)) {
+        if (nickInputArray.length > 15) {
+          SetnickWarn(true);
+          nickInput.value = "";
+          return;
+        }
+      } else {
+        if (nickInputArray.length > 30) {
+          SetnickWarn(true);
+          nickInput.value = "";
+          return;
+        }
+      }
+
+      signup(idInput.value, pw2Input.value, nickInput.value);
+    }
+  }
 
   // styled component
   let TopTitle = styled("p")`
@@ -174,7 +296,7 @@ const Account = () => {
   // end styled component
 
   return (
-    <div>
+    <div onKeyUp={enterkey}>
       <div className="container" style={{ position: "relative" }}>
         {/* logo */}
         <div
@@ -215,6 +337,8 @@ const Account = () => {
                 alignItems: "center",
                 paddingTop: "30px",
                 flexFlow: flexdir,
+                justifyContent: "center",
+                marginLeft: margindir1,
               }}
             >
               <Label>ID(Email)</Label>
@@ -262,6 +386,8 @@ const Account = () => {
                 alignItems: "center",
                 paddingTop: "30px",
                 flexFlow: flexdir,
+                justifyContent: "center",
+                marginLeft: margindir2,
               }}
             >
               <Label>PW</Label>
@@ -290,6 +416,8 @@ const Account = () => {
                 alignItems: "center",
                 paddingTop: "30px",
                 flexFlow: flexdir,
+                justifyContent: "center",
+                marginLeft: margindir2,
               }}
             >
               <Label>PW(확인)</Label>
@@ -317,6 +445,8 @@ const Account = () => {
                 alignItems: "center",
                 paddingTop: "30px",
                 flexFlow: flexdir,
+                justifyContent: "center",
+                marginLeft: margindir1,
               }}
             >
               <Label>닉네임</Label>
@@ -357,6 +487,12 @@ const Account = () => {
             {nickSame === "no" ? (
               <Success>사용가능한 닉네임입니다.</Success>
             ) : null}
+            {checkSame ? (
+              <Warn>
+                중복확인 버튼을 눌러 아이디 및 닉네임의 중복 여부를
+                확인해주세요!!!
+              </Warn>
+            ) : null}
             <p
               style={{
                 paddingTop: "60px",
@@ -390,6 +526,7 @@ const Account = () => {
                     SetidCheck(true);
                     return;
                   }
+
                   if (!checkValue(pwInput)) {
                     SetpwCheck(true);
                     return;
@@ -436,16 +573,7 @@ const Account = () => {
                     }
                   }
 
-                  handleShow();
-
-                  dispatch({
-                    type: "signup",
-                    payload: {
-                      email: idInput.value,
-                      pw: pw2Input.value,
-                      nick: nickInput.value,
-                    },
-                  });
+                  signup(idInput.value, pw2Input.value, nickInput.value);
                 }}
                 style={{
                   backgroundColor: "#2d4059",

@@ -204,11 +204,11 @@ const Mainpage = () => {
       {/* navbar */}
       <Navbar
         fixed="top"
-        variant="dark"
         expand="lg"
+        variant="dark"
         style={{ backgroundColor: "#2D4059" }}
       >
-        <Container style={{ maxWidth: "1400px" }}>
+        <div className="container-fluid">
           <div
             className="d-flex align-items-center"
             onClick={() => {
@@ -281,7 +281,7 @@ const Mainpage = () => {
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
-        </Container>
+        </div>
       </Navbar>
 
       {/* jumbotron */}

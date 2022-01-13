@@ -519,7 +519,7 @@ const DetailBoard = (props) => {
                 {oneBoard === "" ? null : oneBoard.content}
               </pre>
             </Card.Text>
-            <div style={{ marginTop: "30px", textAlign: "center" }}>
+            <div style={{ marginTop: "30px", textAlign: "left" }}>
               {oneBoard === ""
                 ? null
                 : oneBoard.tag === "not"

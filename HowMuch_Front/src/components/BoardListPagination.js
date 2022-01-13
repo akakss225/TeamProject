@@ -34,6 +34,37 @@ const BoardListPagination = () => {
     });
   };
 
+  const readReplyList = async (bno) => {
+    await axios({
+      url: "/ReadReplyList",
+      params: {
+        bno: bno,
+      },
+    }).then((res) => {
+      console.log(res.data);
+      dispatch({
+        type: "readReply",
+        payload: res.data,
+      });
+    });
+  };
+
+  const readValueList = async (bno) => {
+    await axios({
+      url: "/log",
+      params: {
+        bno: bno,
+      },
+    }).then((res) => {
+      console.log("success valuelog");
+      console.log(res.data);
+      dispatch({
+        type: "valuelog",
+        payload: res.data,
+      });
+    });
+  };
+
   let boardState = state.boardReducer;
 
   // tier reader
@@ -116,6 +147,8 @@ const BoardListPagination = () => {
                   key={index}
                   onClick={() => {
                     read(item.bno);
+                    readReplyList(item.bno);
+                    readValueList(item.bno);
                     navigate("/detail/" + item.bno);
                     window.scrollTo(0, 0);
                   }}
