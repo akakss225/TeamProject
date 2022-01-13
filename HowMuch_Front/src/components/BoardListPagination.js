@@ -65,6 +65,22 @@ const BoardListPagination = () => {
     });
   };
 
+  const readCalculateValue = async (bno) => {
+    await axios({
+      url: "/cal",
+      params: {
+        bno: bno,
+      },
+    }).then((res) => {
+      console.log("success cal");
+      console.log(res.data);
+      dispatch({
+        type: "calculate",
+        payload: res.data,
+      });
+    });
+  };
+
   let boardState = state.boardReducer;
 
   // tier reader
@@ -149,6 +165,7 @@ const BoardListPagination = () => {
                     read(item.bno);
                     readReplyList(item.bno);
                     readValueList(item.bno);
+                    readCalculateValue(item.bno);
                     navigate("/detail/" + item.bno);
                     window.scrollTo(0, 0);
                   }}

@@ -31,6 +31,8 @@ const Register = () => {
 
   const [suggestCheck, SetsuggestCheck] = useState(false);
 
+  const [imageCheck, SetimageCheck] = useState(false);
+
   const checkValue = (input) => {
     console.log(input.value);
 
@@ -41,6 +43,7 @@ const Register = () => {
     SettitleCheck(false);
     SetcontentCheck(false);
     SetsuggestCheck(false);
+    SetimageCheck(false);
   };
 
   let currentWidth = document.documentElement.clientWidth;
@@ -188,8 +191,11 @@ const Register = () => {
                       cursor="pointer"
                     />
                   </label>
-                  <span> 👈 원하는 이미지 또는 짤을 선택하세요!</span>
+                  <span> 👈 원하는 이미지 또는 짤을 4개까지만 선택하세요!</span>
                 </div>
+                {imageCheck ? (
+                  <Warn>이미지 및 짤은 최대 4개까지만 선택이 가능합니다!!</Warn>
+                ) : null}
                 <input
                   id="ATTACH"
                   hidden="true"
@@ -199,9 +205,24 @@ const Register = () => {
                   onChange={(e) => {
                     console.log("change!");
 
+                    let imgBoxDiv = document.querySelectorAll("#imgBox div");
+
+                    for (let i = 0; i < imgBoxDiv.length; i++) {
+                      imgBoxDiv[i].parentNode.removeChild(imgBoxDiv[i]);
+                    }
+
                     let fileArr = [...e.target.files];
 
                     // fileArr = [file(),file(),file()]
+
+                    console.log(fileArr.length);
+
+                    if (fileArr.length >= 5) {
+                      SetimageCheck(true);
+                      return;
+                    } else {
+                      SetimageCheck(false);
+                    }
 
                     let base64Arr = [];
 

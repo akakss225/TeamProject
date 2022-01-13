@@ -32,6 +32,8 @@ let hotBoard = "";
 
 let value = "";
 
+let calculate = "";
+
 // const login = async (username, password) => {
 //   await axios
 //     .post(API_URL + "/login", {
@@ -149,6 +151,17 @@ function valueReducer(state = value, actions) {
   return state;
 }
 
+function caculateReducer(state = calculate, actions) {
+  if (actions.type === "calculate") {
+    let copy = { ...state };
+
+    copy = actions.payload;
+
+    return copy;
+  }
+  return state;
+}
+
 let store = createStore(
   combineReducers({
     boardReducer,
@@ -156,6 +169,7 @@ let store = createStore(
     hotBoardReducer,
     replyReducer,
     valueReducer,
+    caculateReducer,
   })
 );
 

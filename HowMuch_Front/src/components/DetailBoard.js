@@ -87,7 +87,7 @@ const DetailBoard = (props) => {
     });
   };
 
-  const readCalculateValue = async () => {
+  const readCalculateValue = async (bno) => {
     await axios({
       url: "/cal",
       params: {
@@ -96,7 +96,10 @@ const DetailBoard = (props) => {
     }).then((res) => {
       console.log("success cal");
       console.log(res.data);
-      SetcalculateValue(res.data);
+      dispatch({
+        type: "calculate",
+        payload: res.data,
+      });
     });
   };
 
@@ -173,7 +176,7 @@ const DetailBoard = (props) => {
     read(bno);
     readValueList();
     readList();
-    readCalculateValue();
+    readCalculateValue(bno);
     upreadCount();
     readedBoard();
     readReplyList();
@@ -187,7 +190,7 @@ const DetailBoard = (props) => {
 
   let valueState = state.valueReducer;
 
-  let [calculateValue, SetcalculateValue] = useState("");
+  let calculateValue = state.caculateReducer;
 
   // tier reader
   const tierSelect = (point) => {
@@ -413,7 +416,7 @@ const DetailBoard = (props) => {
                     console.log(res.data);
                     console.log("value end!!!");
                     readList();
-                    SetcalculateValue(res.data);
+                    readCalculateValue(oneBoard.bno);
                   });
 
                   navigate("/detail/" + oneBoard.bno);
@@ -1061,7 +1064,6 @@ const DetailBoard = (props) => {
                   price: price.value,
                 },
               }).then((res) => {
-                console.log(res.data[0].price === -1);
                 if (res.data === "") {
                   console.log("same user");
                   SetwarnDuplication(true);
@@ -1081,7 +1083,7 @@ const DetailBoard = (props) => {
                 }
               });
 
-              await readCalculateValue();
+              await readCalculateValue(oneBoard.bno);
 
               price.value = "";
 
