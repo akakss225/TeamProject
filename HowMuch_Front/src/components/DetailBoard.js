@@ -291,6 +291,7 @@ const DetailBoard = (props) => {
 
   useEffect(() => {
     resetBoolean();
+    readedBoard(bno);
   }, [oneBoard]);
 
   // resize screen
@@ -1013,6 +1014,7 @@ const DetailBoard = (props) => {
                   }
 
                   read(bno);
+                  readList();
                 });
               }}
               style={{ cursor: "pointer" }}
@@ -1064,6 +1066,7 @@ const DetailBoard = (props) => {
                   }
 
                   read(bno);
+                  readList();
                 });
               }}
               style={{ cursor: "pointer" }}

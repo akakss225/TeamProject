@@ -360,6 +360,18 @@ const Account = () => {
                     return;
                   }
                   resetShow();
+
+                  const idInputArray = idInput.value.split("");
+
+                  if (
+                    !idInputArray.find((item) => item === "@") ||
+                    !idInputArray.find((item) => item === ".")
+                  ) {
+                    SetidWarn(true);
+                    idInput.value = "";
+                    return;
+                  }
+
                   idSameCheck(idInput.value);
                 }}
                 style={{ margin: "20px 10px" }}
@@ -468,6 +480,25 @@ const Account = () => {
                     return;
                   }
                   resetShow();
+
+                  const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/; //한글
+
+                  const nickInputArray = nickInput.value.split("");
+
+                  if (korean.test(nickInput.value)) {
+                    if (nickInputArray.length > 15) {
+                      SetnickWarn(true);
+                      nickInput.value = "";
+                      return;
+                    }
+                  } else {
+                    if (nickInputArray.length > 30) {
+                      SetnickWarn(true);
+                      nickInput.value = "";
+                      return;
+                    }
+                  }
+
                   nickSameCheck(nickInput.value);
                 }}
                 style={{ margin: "20px 10px" }}
